@@ -1,0 +1,12 @@
+Options -Indexes
+
+# Autorise uniquement les fichiers qui existent ou les dossiers
+RewriteEngine On
+
+# FORCE LE PASSAGE DU HEADER AUTHORIZATION VERS PHP (Indispensable pour JWT sur WAMP)
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

@@ -1,0 +1,33 @@
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rs-planner-backend
+    volumes:
+      - ./volumes/database:/var/www/html/data
+      - ./volumes/uploads:/var/www/html/uploads
+      - ./volumes/logs:/var/www/html/logs
+    environment:
+      - CORS_ORIGIN=http://localhost:8080
+    restart: unless-stopped
+    networks:
+      - rs-planner-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rs-planner-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - rs-planner-network
+
+networks:
+  rs-planner-network:
+    driver: bridge

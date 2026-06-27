@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stratis — Maquettes UI Complètes v2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --b50:#EBF4FF;--b100:#BFDBFE;--b200:#93C5FD;--b300:#60A5FA;--b400:#3B82F6;
+  --b500:#2563EB;--b600:#1D4ED8;--b700:#1E3A8A;--b800:#162C6C;--b900:#0F1E4A;
+  --g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;--g400:#94A3B8;
+  --g500:#64748B;--g600:#475569;--g700:#334155;--g800:#1E293B;--g900:#0F172A;
+  --ok:#10B981;--ok-l:#ECFDF5;--ok-d:#059669;
+  --warn:#F59E0B;--warn-l:#FFFBEB;--warn-d:#D97706;
+  --err:#EF4444;--err-l:#FEF2F2;--err-d:#DC2626;
+  --pur:#8B5CF6;--pur-l:#EDE9FE;
+  --w:#fff;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-xl:24px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh-md:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+  --sh-blue:0 4px 24px rgba(59,130,246,.25);
+  --nav-h:64px;
+  --ease:.2s cubic-bezier(.4,0,.2,1);
+  --ff-d:'Syne',sans-serif;
+  --ff-b:'DM Sans',sans-serif;
+  --ff-m:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-b);background:var(--g50);color:var(--g800);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button,input,select,textarea{font-family:var(--ff-b);font-size:.875rem}
+
+/* DEV NAV */
+#dev-nav{
+  position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);
+  z-index:9999;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1);padding:.5rem .6rem;border-radius:50px;
+  display:flex;gap:.3rem;flex-wrap:wrap;justify-content:center;max-width:95vw;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.dev-tab{
+  padding:.35rem .9rem;border-radius:50px;font-size:.75rem;font-weight:500;
+  cursor:pointer;background:transparent;color:rgba(255,255,255,.5);
+  border:none;transition:var(--ease);white-space:nowrap;
+}
+.dev-tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.dev-tab.active{background:#fff;color:var(--g900)}
+
+/* PAGES */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+.with-nav{padding-top:var(--nav-h)}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);
+  background:rgba(255,255,255,.85);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--g200);display:flex;align-items:center;
+  padding:0 2rem;gap:1rem;
+}
+.nb-logo{font-family:var(--ff-d);font-size:1.4rem;font-weight:800;color:var(--b800);letter-spacing:-.03em;flex-shrink:0}
+.nb-logo em{color:var(--b400);font-style:normal}
+.nb-links{display:flex;gap:.25rem;flex:1}
+.nb-link{
+  padding:.45rem 1rem;border-radius:var(--r-md);font-size:.875rem;font-weight:500;
+  color:var(--g600);cursor:pointer;border:none;background:transparent;transition:var(--ease);
+}
+.nb-link:hover{background:var(--g100);color:var(--g800)}
+.nb-link.on{background:var(--b50);color:var(--b600)}
+.nb-right{display:flex;align-items:center;gap:.75rem}
+.nb-notif{
+  width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;
+  justify-content:center;background:var(--g100);cursor:pointer;border:none;
+  position:relative;transition:var(--ease);font-size:1rem;
+}
+.nb-notif:hover{background:var(--g200)}
+.nb-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--err);border:2px solid #fff}
+.nb-av{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--b400),var(--b700));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0;
+  box-shadow:0 0 0 2px #fff,0 0 0 4px var(--b200);
+}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--r-md);font-size:.875rem;font-weight:500;border:none;cursor:pointer;transition:var(--ease);white-space:nowrap}
+.btn-p{background:var(--b500);color:#fff;box-shadow:var(--sh-blue)}
+.btn-p:hover{background:var(--b600);transform:translateY(-1px);box-shadow:0 6px 28px rgba(59,130,246,.35)}
+.btn-s{background:#fff;color:var(--g700);border:1px solid var(--g200);box-shadow:var(--sh-sm)}
+.btn-s:hover{border-color:var(--g300);background:var(--g50);transform:translateY(-1px)}
+.btn-g{background:transparent;color:var(--b500);padding:.4rem .75rem}
+.btn-g:hover{background:var(--b50)}
+.btn-d{background:transparent;color:var(--err-d);padding:.4rem .75rem}
+.btn-d:hover{background:var(--err-l)}
+.btn-sm{padding:.35rem .9rem;font-size:.8rem}
+.btn-lg{padding:.8rem 1.75rem;font-size:1rem;border-radius:var(--r-lg)}
+.btn-full{width:100%;justify-content:center}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--g200);box-shadow:var(--sh-sm);padding:1.5rem}
+.card-sm{padding:1rem 1.25rem}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:50px;font-size:.72rem;font-weight:600;letter-spacing:.02em}
+.b-blue{background:var(--b50);color:var(--b600)}
+.b-green{background:var(--ok-l);color:var(--ok-d)}
+.b-amber{background:var(--warn-l);color:var(--warn-d)}
+.b-red{background:var(--err-l);color:var(--err-d)}
+.b-gray{background:var(--g100);color:var(--g600)}
+.b-purple{background:var(--pur-l);color:var(--pur)}
+
+/* INPUTS */
+.fg{display:flex;flex-direction:column;gap:.4rem}
+.fl{font-size:.8rem;font-weight:600;color:var(--g700);letter-spacing:.01em}
+.fh{font-size:.75rem;color:var(--g400);margin-top:-.2rem}
+.inp{padding:.65rem 1rem;border:1.5px solid var(--g200);border-radius:var(--r-md);background:#fff;color:var(--g800);font-size:.9rem;outline:none;transition:var(--ease);width:100%}
+.inp:focus{border-color:var(--b400);box-shadow:0 0 0 3px var(--b50)}
+.inp::placeholder{color:var(--g400)}
+textarea.inp{resize:vertical;min-height:90px}
+select.inp{cursor:pointer}
+.iw{position:relative}
+.iw .inp{padding-left:2.4rem}
+.ii{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--g400);pointer-events:none}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.fr2{grid-template-columns:1fr}}
+
+/* LAYOUT HELPERS */
+.fx{display:flex}
+.fxc{display:flex;flex-direction:column}
+.aic{align-items:center}
+.jb{justify-content:space-between}
+.g4{gap:.25rem}
+.g8{gap:.5rem}
+.g12{gap:.75rem}
+.g16{gap:1rem}
+.g20{gap:1.25rem}
+.g24{gap:1.5rem}
+.w100{width:100%}
+.mla{margin-left:auto}
+
+/* PROGRESS */
+.pw{height:6px;background:var(--g100);border-radius:50px;overflow:hidden}
+.pf{height:100%;border-radius:50px;background:var(--b400);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.pw-lg{height:10px}
+
+/* AVATARS */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.av-xs{width:24px;height:24px;font-size:.58rem}
+.av-sm{width:32px;height:32px;font-size:.7rem}
+.av-md{width:42px;height:42px;font-size:.85rem}
+.av-lg{width:52px;height:52px;font-size:1rem}
+.av-xl{width:80px;height:80px;font-size:1.5rem}
+.c-blue{background:var(--b100);color:var(--b800)}
+.c-green{background:var(--ok-l);color:var(--ok-d)}
+.c-amber{background:var(--warn-l);color:var(--warn-d)}
+.c-red{background:var(--err-l);color:var(--err-d)}
+.c-purple{background:var(--pur-l);color:var(--pur)}
+.c-grad{background:linear-gradient(135deg,var(--b400),var(--b700));color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.av-stack{display:flex}
+.av-stack .av{border:2px solid #fff;margin-left:-8px}
+.av-stack .av:first-child{margin-left:0}
+
+/* TABS */
+.tabs{display:flex;gap:.25rem;border-bottom:1px solid var(--g200);margin-bottom:1.5rem}
+.tab{padding:.65rem 1.1rem;border:none;background:transparent;font-size:.875rem;font-weight:500;color:var(--g500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:var(--ease)}
+.tab:hover{color:var(--g800)}
+.tab.on{color:var(--b500);border-bottom-color:var(--b500)}
+
+/* DIVIDER */
+.div{height:1px;background:var(--g100);margin:1rem 0}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:.3rem .7rem;border-radius:var(--r-sm);font-size:.75rem;font-weight:600;background:var(--b50);color:var(--b700);border:1px solid var(--b100)}
+.chip-sm{padding:.2rem .5rem;font-size:.7rem}
+.chip-on{background:var(--b100);border-color:var(--b300);color:var(--b800)}
+
+/* SKILL DOTS */
+.sd{display:flex;gap:3px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--g200)}
+.dot.on{background:var(--b400)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.au{animation:fadeUp .45s cubic-bezier(.4,0,.2,1) both}
+.ai{animation:fadeIn .3s ease both}
+.as{animation:scaleIn .25s cubic-bezier(.4,0,.2,1) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}
+.d4{animation-delay:.32s}.d5{animation-delay:.4s}
+
+/* ======== AUTH ======== */
+.auth-wrap{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+@media(max-width:900px){.auth-wrap{grid-template-columns:1fr}}
+.auth-panel{
+  background:var(--b800);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:4rem 3rem;
+  position:relative;overflow:hidden;
+}
+.auth-panel::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 20% 30%,rgba(59,130,246,.35) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 60% at 80% 70%,rgba(30,58,138,.5) 0%,transparent 70%);
+}
+.auth-grid{
+  position:absolute;inset:0;opacity:.07;
+  background-image:linear-gradient(var(--b300) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--b300) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.auth-content{position:relative;z-index:1;text-align:center;max-width:380px}
+.auth-logo{font-family:var(--ff-d);font-size:2rem;font-weight:800;color:#fff;letter-spacing:-.04em;margin-bottom:2.5rem}
+.auth-logo em{color:var(--b200);font-style:normal}
+.auth-mockup-box{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r-xl);padding:1.25rem;margin-bottom:2rem;backdrop-filter:blur(4px);
+}
+.auth-mini{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r-md);padding:.75rem 1rem;text-align:left;margin-bottom:.6rem;
+}
+.auth-mini:last-child{margin-bottom:0}
+.auth-tagline{font-size:1.5rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:.75rem}
+.auth-sub{font-size:.875rem;color:rgba(255,255,255,.55);line-height:1.7}
+.auth-form-side{background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem}
+.auth-inner{width:100%;max-width:400px}
+.auth-h{font-family:var(--ff-d);font-size:1.75rem;font-weight:700;color:var(--g900);margin-bottom:.4rem}
+.auth-p{font-size:.9rem;color:var(--g500);margin-bottom:2rem;line-height:1.5}
+.auth-sep{display:flex;align-items:center;gap:1rem;color:var(--g400);font-size:.8rem;margin:1.5rem 0}
+.auth-sep::before,.auth-sep::after{content:'';flex:1;height:1px;background:var(--g200)}
+.auth-foot{text-align:center;font-size:.875rem;color:var(--g500);margin-top:1.5rem}
+.auth-foot a{color:var(--b500);font-weight:500;cursor:pointer}
+.auth-foot a:hover{text-decoration:underline}
+
+/* ======== DASHBOARD ======== */
+.ctr{max-width:1280px;margin:0 auto;padding:2rem 1.5rem}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.kpi-row{grid-template-columns:1fr}}
+.kpi{
+  background:#fff;border-radius:var(--r-lg);border:1px solid var(--g200);
+  padding:1.25rem 1.5rem;box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+  transition:var(--ease);cursor:default;
+}
+.kpi:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.kpi::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;border-radius:0 var(--r-lg) var(--r-lg) 0}
+.kpi.kb::after{background:var(--b400)}.kpi.kg::after{background:var(--ok)}.kpi.kw::after{background:var(--warn)}.kpi.kp::after{background:var(--pur)}
+.kpi-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.5rem}
+.kpi-val{font-family:var(--ff-d);font-size:2.25rem;font-weight:700;color:var(--g900);line-height:1}
+.kpi-sub{font-size:.78rem;color:var(--g500);margin-top:.4rem}
+.kpi-sub .up{color:var(--ok);font-weight:600}
+.kpi-sub .dn{color:var(--err);font-weight:600}
+
+.pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.25rem}
+.pc{
+  background:#fff;border-radius:var(--r-lg);border:1px solid var(--g200);
+  padding:1.5rem;cursor:pointer;transition:var(--ease);
+  display:flex;flex-direction:column;gap:1.1rem;position:relative;overflow:hidden;
+}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.pc.pb::before{background:var(--b400)}.pc.pg::before{background:var(--ok)}.pc.pw::before{background:var(--warn)}.pc.pp::before{background:var(--pur)}
+.pc:hover{border-color:var(--b200);box-shadow:var(--sh-md);transform:translateY(-3px)}
+.pc-title{font-weight:600;font-size:1rem;color:var(--g900);margin-bottom:.25rem}
+.pc-desc{font-size:.83rem;color:var(--g500);line-height:1.5}
+.pc-foot{display:flex;align-items:center;justify-content:space-between}
+.pc-meta{font-size:.75rem;color:var(--g400)}
+.pc-add{
+  border:2px dashed var(--g200);background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.5rem;min-height:200px;cursor:pointer;border-radius:var(--r-lg);transition:var(--ease);
+}
+.pc-add:hover{border-color:var(--b300);background:var(--b50)}
+.pc-add-ic{width:44px;height:44px;border-radius:50%;background:var(--b50);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--b400);transition:var(--ease)}
+.pc-add:hover .pc-add-ic{background:var(--b100)}
+
+/* ======== PROJECT HERO ======== */
+.ph{background:#fff;border-bottom:1px solid var(--g200);padding:1.75rem 0}
+.ph-in{max-width:1280px;margin:0 auto;padding:0 1.5rem;display:flex;gap:2rem;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.ph-name{font-family:var(--ff-d);font-size:1.6rem;font-weight:800;color:var(--g900);letter-spacing:-.02em;margin-bottom:.75rem}
+.ph-meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-size:.83rem;color:var(--g500)}
+.ph-pct{font-family:var(--ff-d);font-size:1.5rem;font-weight:700;color:var(--b500)}
+.bc{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--g400);margin-bottom:.75rem}
+.bc a{color:var(--b500);cursor:pointer}
+
+/* ======== PLANNER 3-COL ======== */
+.p3{display:grid;grid-template-columns:240px 1fr 300px;gap:1.25rem;align-items:start}
+@media(max-width:1200px){.p3{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.p3{grid-template-columns:1fr}}
+
+/* ======== TASKS ======== */
+.ti{
+  background:#fff;border:1px solid var(--g200);border-radius:var(--r-md);
+  padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:.75rem;transition:var(--ease);
+}
+.ti:hover{border-color:var(--g300);box-shadow:var(--sh-sm)}
+.tck{
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--g300);
+  flex-shrink:0;margin-top:2px;cursor:pointer;transition:var(--ease);
+  display:flex;align-items:center;justify-content:center;
+}
+.tck:hover{border-color:var(--b400)}
+.tck.done{background:var(--b400);border-color:var(--b400)}
+.tck.done::after{content:'';width:6px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block}
+.tck.wip{border-color:var(--warn)}
+.tb{flex:1;min-width:0}
+.tt{font-weight:500;font-size:.9rem;color:var(--g800)}
+.tt.done{text-decoration:line-through;color:var(--g400)}
+.tm{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.3rem}
+.td{font-size:.75rem;color:var(--g400)}
+.tch{margin-left:2rem;margin-top:.5rem;display:flex;flex-direction:column;gap:.4rem;border-left:2px solid var(--g100);padding-left:.75rem}
+.tci{display:flex;align-items:center;gap:.5rem}
+.tcc{width:14px;height:14px;border-radius:50%;border:2px solid var(--g300);flex-shrink:0}
+.tcc.done{background:var(--b300);border-color:var(--b300)}
+.tcl{font-size:.82rem;color:var(--g600)}
+.tcl.done{text-decoration:line-through;color:var(--g400)}
+
+/* ======== MATCHING ======== */
+.mc{background:#fff;border:1px solid var(--g200);border-radius:var(--r-md);padding:1rem;transition:var(--ease)}
+.mc:hover{box-shadow:var(--sh-sm);border-color:var(--b200)}
+.troc{border-left:3px solid var(--b400);border-radius:0 var(--r-md) var(--r-md) 0;background:var(--b50);border-top:1px solid var(--b100);border-right:1px solid var(--b100);border-bottom:1px solid var(--b100);padding:1rem}
+
+/* ======== PROFILE ======== */
+.prof-lay{max-width:1000px;margin:0 auto;padding:2rem 1.5rem;display:grid;grid-template-columns:260px 1fr;gap:1.5rem;align-items:start}
+@media(max-width:768px){.prof-lay{grid-template-columns:1fr}}
+.prof-av-big{width:88px;height:88px;background:linear-gradient(135deg,var(--b300),var(--b700));color:#fff;font-family:var(--ff-d);font-size:1.75rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 4px 20px rgba(59,130,246,.3)}
+.sp{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--g100);font-size:.875rem}
+.sp:last-child{border-bottom:none}
+.cr{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--g100)}
+.cr:last-child{border-bottom:none}
+
+/* ======== NOTIFICATIONS ======== */
+.ni{display:flex;align-items:flex-start;gap:1rem;padding:1.1rem 1.25rem;border-bottom:1px solid var(--g100);cursor:pointer;transition:var(--ease)}
+.ni:last-child{border-bottom:none}
+.ni:hover{background:var(--g50)}
+.ni.unread{background:var(--b50)}
+.ni.unread:hover{background:#DBEAFE}
+.ndot{width:8px;height:8px;border-radius:50%;background:var(--b400);margin-top:6px;flex-shrink:0}
+.nt{font-size:.875rem;color:var(--g800);line-height:1.5}
+.nt strong{color:var(--g900)}
+.ns{font-size:.75rem;color:var(--g400);margin-top:.25rem}
+
+/* ======== MEMBERS TABLE ======== */
+.mt-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr auto;gap:1rem;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--g100);font-size:.875rem;transition:var(--ease)}
+.mt-row:hover{background:var(--g50)}
+.mt-row:last-child{border-bottom:none}
+.mt-hd{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr auto;gap:1rem;padding:.6rem 1.25rem;border-bottom:1px solid var(--g200);font-size:.72rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.08em;background:var(--g50)}
+
+/* ======== COMP TOGGLE ======== */
+.ct{padding:.35rem .9rem;border-radius:var(--r-sm);font-size:.78rem;font-weight:600;cursor:pointer;background:var(--g100);color:var(--g600);border:1.5px solid transparent;transition:var(--ease)}
+.ct:hover{background:var(--b50);color:var(--b600);border-color:var(--b200)}
+.ct.on{background:var(--b50);color:var(--b700);border-color:var(--b300)}
+
+/* ======== EMPTY STATE ======== */
+.es{text-align:center;padding:5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.es-ic{width:72px;height:72px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:1.75rem}
+.es-t{font-family:var(--ff-d);font-size:1.1rem;font-weight:700;color:var(--g700)}
+.es-p{font-size:.9rem;color:var(--g500);max-width:300px;line-height:1.6}
+
+/* USER RESULT */
+.ur{display:flex;align-items:center;gap:.75rem;padding:.75rem;border-radius:var(--r-md);cursor:pointer;transition:var(--ease);border:1px solid transparent}
+.ur:hover{background:var(--b50);border-color:var(--b100)}
+.ur-name{font-weight:500;font-size:.9rem;color:var(--g800)}
+.ur-sk{font-size:.78rem;color:var(--g500)}
+
+/* INFO BOX */
+.info-box{padding:.85rem 1rem;border-radius:var(--r-md);font-size:.82rem;line-height:1.6}
+.info-blue{background:var(--b50);border:1px solid var(--b100);color:var(--b700)}
+.info-amber{background:var(--warn-l);border:1px solid #FDE68A;color:#92400E}
+.info-green{background:var(--ok-l);border:1px solid #A7F3D0;color:#065F46}
+
+@media(max-width:768px){.nb-links{display:none}.ctr{padding:1rem}}
+</style>
+</head>
+<body>
+<!-- DEV NAV -->
+<div id="dev-nav">
+  <button class="dev-tab active" onclick="go('login')">🔐 Login</button>
+  <button class="dev-tab" onclick="go('register')">📝 Inscription</button>
+  <button class="dev-tab" onclick="go('forgot')">🔑 Mot de passe</button>
+  <button class="dev-tab" onclick="go('dashboard')">🏠 Dashboard</button>
+  <button class="dev-tab" onclick="go('newproject')">➕ Nouveau projet</button>
+  <button class="dev-tab" onclick="go('detail')">📁 Détail projet</button>
+  <button class="dev-tab" onclick="go('newtask')">✅ Nouvelle tâche</button>
+  <button class="dev-tab" onclick="go('members')">👥 Membres</button>
+  <button class="dev-tab" onclick="go('matching')">🤝 Matching</button>
+  <button class="dev-tab" onclick="go('profile')">👤 Profil</button>
+  <button class="dev-tab" onclick="go('notifications')">🔔 Notifs</button>
+  <button class="dev-tab" onclick="go('e404')">❌ 404</button>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="nb">
+  <div class="nb-logo">STRA<em>TIS</em></div>
+  <div class="nb-links">
+    <button class="nb-link on" onclick="go('dashboard')">Dashboard</button>
+    <button class="nb-link" onclick="go('detail')">Mes Projets</button>
+    <button class="nb-link" onclick="go('matching')">Matching</button>
+  </div>
+  <div class="nb-right">
+    <button class="nb-notif" onclick="go('notifications')">🔔<span class="nb-dot"></span></button>
+    <div class="nb-av" onclick="go('profile')">AL</div>
+  </div>
+</nav>
+
+<!-- =========================================================
+  P1 — LOGIN
+========================================================= -->
+<div class="page active" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-panel">
+      <div class="auth-grid"></div>
+      <div class="auth-content au">
+        <div class="auth-logo">STRA<em>TIS</em></div>
+        <div class="auth-mockup-box au d1">
+          <div class="auth-mini">
+            <div style="font-size:.7rem;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.05em;margin-bottom:.3rem">PROJET ACTIF</div>
+            <div style="font-size:.95rem;font-weight:700;color:#fff;margin-bottom:.4rem">Application Mobile RS</div>
+            <div style="height:5px;background:rgba(255,255,255,.1);border-radius:50px;overflow:hidden">
+              <div style="width:65%;height:100%;background:var(--b300);border-radius:50px"></div>
+            </div>
+            <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:.3rem">65% · 3 membres</div>
+          </div>
+          <div class="auth-mini fx aic g8">
+            <div class="av av-sm c-blue" style="background:rgba(59,130,246,.3);color:var(--b200)">DA</div>
+            <div>
+              <div style="font-size:.8rem;font-weight:600;color:#fff">Darel Kouassi</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.4)">85% compatible · React, Node</div>
+            </div>
+            <div style="margin-left:auto;padding:.2rem .55rem;border-radius:50px;background:rgba(59,130,246,.25);color:var(--b200);font-size:.68rem;font-weight:700">MATCH</div>
+          </div>
+        </div>
+        <div class="auth-tagline au d2">Collaborez mieux,<br>ensemble.</div>
+        <p class="auth-sub au d3">Gérez vos projets, trouvez les bons collaborateurs et avancez grâce au matching intelligent par compétences.</p>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-inner au">
+        <h1 class="auth-h">Bon retour 👋</h1>
+        <p class="auth-p">Connectez-vous pour accéder à vos projets.</p>
+        <div class="fxc g16">
+          <div class="fg">
+            <label class="fl">Adresse email</label>
+            <div class="iw"><span class="ii">✉</span><input class="inp" type="email" placeholder="vous@example.com"></div>
+          </div>
+          <div class="fg">
+            <label class="fl">Mot de passe</label>
+            <div class="iw"><span class="ii">🔒</span><input class="inp" type="password" placeholder="••••••••"></div>
+          </div>
+          <div class="fx jb aic">
+            <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--g600);cursor:pointer">
+              <input type="checkbox" style="accent-color:var(--b500)"> Se souvenir de moi
+            </label>
+            <a href="#" style="font-size:.82rem;color:var(--b500);font-weight:500" onclick="go('forgot')">Mot de passe oublié ?</a>
+          </div>
+          <button class="btn btn-p btn-lg btn-full" onclick="go('dashboard')">Se connecter →</button>
+        </div>
+        <div class="auth-sep">ou continuer avec</div>
+        <button class="btn btn-s btn-full" style="margin-bottom:.75rem">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuer avec Google
+        </button>
+        <p class="auth-foot">Pas encore de compte ? <a onclick="go('register')">S'inscrire gratuitement</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P2 — REGISTER
+========================================================= -->
+<div class="page" id="page-register">
+  <div class="auth-wrap">
+    <div class="auth-panel">
+      <div class="auth-grid"></div>
+      <div class="auth-content au">
+        <div class="auth-logo">STRA<em>TIS</em></div>
+        <div class="auth-tagline au d1">Rejoignez la communauté.</div>
+        <p class="auth-sub au d2">Créez votre profil de compétences et connectez-vous avec des collaborateurs partageant vos ambitions.</p>
+        <div class="fxc g12" style="margin-top:2rem" class="au d3">
+          <div style="display:flex;align-items:center;gap:.75rem;color:rgba(255,255,255,.7);font-size:.875rem"><span style="color:var(--b200)">✓</span> Profil de compétences détaillé</div>
+          <div style="display:flex;align-items:center;gap:.75rem;color:rgba(255,255,255,.7);font-size:.875rem"><span style="color:var(--b200)">✓</span> Matching intelligent par IA</div>
+          <div style="display:flex;align-items:center;gap:.75rem;color:rgba(255,255,255,.7);font-size:.875rem"><span style="color:var(--b200)">✓</span> Collaboration en temps réel</div>
+          <div style="display:flex;align-items:center;gap:.75rem;color:rgba(255,255,255,.7);font-size:.875rem"><span style="color:var(--b200)">✓</span> Système de troc de compétences</div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-inner au">
+        <h1 class="auth-h">Créer un compte</h1>
+        <p class="auth-p">Gratuit. Aucune carte de crédit requise.</p>
+        <div class="fxc g16">
+          <div class="fr2">
+            <div class="fg"><label class="fl">Prénom</label><input class="inp" type="text" placeholder="Alice"></div>
+            <div class="fg"><label class="fl">Nom</label><input class="inp" type="text" placeholder="Martin"></div>
+          </div>
+          <div class="fg">
+            <label class="fl">Nom d'utilisateur</label>
+            <div class="iw"><span class="ii" style="font-size:.85rem">@</span><input class="inp" type="text" placeholder="alice_martin"></div>
+            <span class="fh">Visible par les autres collaborateurs</span>
+          </div>
+          <div class="fg"><label class="fl">Adresse email</label><input class="inp" type="email" placeholder="alice@example.com"></div>
+          <div class="fg"><label class="fl">Mot de passe</label><input class="inp" type="password" placeholder="8 caractères minimum"></div>
+          <div class="fg"><label class="fl">Confirmer le mot de passe</label><input class="inp" type="password" placeholder="••••••••"></div>
+          <label style="display:flex;align-items:flex-start;gap:.65rem;font-size:.82rem;color:var(--g600);line-height:1.5;cursor:pointer">
+            <input type="checkbox" style="accent-color:var(--b500);margin-top:2px;flex-shrink:0">
+            J'accepte les <a href="#" style="color:var(--b500)">Conditions d'utilisation</a> et la <a href="#" style="color:var(--b500)">Politique de confidentialité</a>
+          </label>
+          <button class="btn btn-p btn-lg btn-full" onclick="go('dashboard')">Créer mon compte →</button>
+        </div>
+        <p class="auth-foot">Déjà inscrit ? <a onclick="go('login')">Se connecter</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P3 — MOT DE PASSE OUBLIÉ
+========================================================= -->
+<div class="page" id="page-forgot">
+  <div class="auth-wrap">
+    <div class="auth-panel">
+      <div class="auth-grid"></div>
+      <div class="auth-content au">
+        <div class="auth-logo">STRA<em>TIS</em></div>
+        <div class="auth-tagline au d1">Pas de panique.</div>
+        <p class="auth-sub au d2">Entrez votre adresse email et nous vous enverrons un lien sécurisé pour réinitialiser votre mot de passe.</p>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-inner au">
+        <div style="width:52px;height:52px;border-radius:var(--r-lg);background:var(--b50);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.5rem">🔑</div>
+        <h1 class="auth-h">Mot de passe oublié ?</h1>
+        <p class="auth-p">Saisissez votre email. Si un compte existe, vous recevrez un lien de réinitialisation dans quelques minutes.</p>
+        <div class="fxc g16">
+          <div class="fg"><label class="fl">Adresse email</label><input class="inp" type="email" placeholder="alice@example.com"></div>
+          <button class="btn btn-p btn-lg btn-full">Envoyer le lien →</button>
+          <button class="btn btn-s btn-full" onclick="go('login')">← Retour à la connexion</button>
+        </div>
+        <div class="info-box info-blue" style="margin-top:1.5rem">
+          <strong>Lien envoyé !</strong> Vérifiez votre boîte mail et vos spams. Le lien expire dans <strong>30 minutes</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P4 — DASHBOARD
+========================================================= -->
+<div class="page with-nav" id="page-dashboard">
+  <div class="ctr">
+    <div class="fx jb aic" style="flex-wrap:wrap;gap:1rem;margin-bottom:2rem" id="dw">
+      <div class="au">
+        <h1 style="font-family:var(--ff-d);font-size:1.85rem;font-weight:800;color:var(--g900);letter-spacing:-.02em">Bonjour, Alice 👋</h1>
+        <p style="color:var(--g500);margin-top:.25rem">Voici votre tableau de bord — <span id="dt"></span></p>
+      </div>
+      <button class="btn btn-p au d1" onclick="go('newproject')">+ Nouveau projet</button>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi kb au d1"><div class="kpi-lbl">Projets actifs</div><div class="kpi-val">4</div><div class="kpi-sub"><span class="up">↑ 1</span> ce mois</div></div>
+      <div class="kpi kg au d2"><div class="kpi-lbl">Tâches terminées</div><div class="kpi-val">34</div><div class="kpi-sub"><span class="up">↑ 12</span> cette semaine</div></div>
+      <div class="kpi kw au d3"><div class="kpi-lbl">En retard</div><div class="kpi-val">2</div><div class="kpi-sub"><span class="dn">↑ 1</span> à traiter</div></div>
+      <div class="kpi kp au d4"><div class="kpi-lbl">Matchings</div><div class="kpi-val">3</div><div class="kpi-sub"><span style="color:var(--pur);font-weight:600">✦</span> nouvelles suggestions</div></div>
+    </div>
+
+    <div class="fx jb aic" style="margin-bottom:1rem">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400)">Mes projets</div>
+      <div class="fx g8">
+        <button class="btn btn-s btn-sm">Filtrer</button>
+        <button class="btn btn-g btn-sm">Tout voir</button>
+      </div>
+    </div>
+
+    <div class="pg-grid">
+      <div class="pc pb au d1" onclick="go('detail')">
+        <div class="fx jb g8"><div><div class="pc-title">Application Mobile RS</div><div class="pc-desc">Refonte de l'interface utilisateur pour l'app de gestion.</div></div><span class="badge b-blue">En cours</span></div>
+        <div><div class="fx jb" style="font-size:.75rem;color:var(--g500);margin-bottom:.35rem"><span>Avancement</span><span>65%</span></div><div class="pw"><div class="pf" style="width:65%"></div></div></div>
+        <div class="pc-foot"><div class="av-stack"><div class="av av-xs c-blue">AL</div><div class="av av-xs c-amber">FR</div><div class="av av-xs c-green">CÉ</div></div><div class="pc-meta">Échéance 15 mars</div></div>
+      </div>
+      <div class="pc pw au d2" onclick="go('detail')">
+        <div class="fx jb g8"><div><div class="pc-title">Site Vitrine Startup</div><div class="pc-desc">Création d'un site fintech avec animations avancées.</div></div><span class="badge b-amber">En retard</span></div>
+        <div><div class="fx jb" style="font-size:.75rem;color:var(--g500);margin-bottom:.35rem"><span>Avancement</span><span>30%</span></div><div class="pw"><div class="pf" style="width:30%;background:var(--warn)"></div></div></div>
+        <div class="pc-foot"><div class="av-stack"><div class="av av-xs c-blue">AL</div><div class="av av-xs c-purple">DA</div></div><div class="pc-meta">Échéance 28 fév. ⚠</div></div>
+      </div>
+      <div class="pc pg au d3" onclick="go('detail')">
+        <div class="fx jb g8"><div><div class="pc-title">API Backend Django</div><div class="pc-desc">API REST pour une plateforme e-commerce.</div></div><span class="badge b-green">Terminé</span></div>
+        <div><div class="fx jb" style="font-size:.75rem;color:var(--g500);margin-bottom:.35rem"><span>Avancement</span><span>100%</span></div><div class="pw"><div class="pf" style="width:100%;background:var(--ok)"></div></div></div>
+        <div class="pc-foot"><div class="av-stack"><div class="av av-xs c-blue">AL</div><div class="av av-xs c-amber">FR</div><div class="av av-xs c-green">AH</div><div class="av av-xs" style="background:var(--g200);color:var(--g600)">+2</div></div><div class="pc-meta">Livré 10 janv.</div></div>
+      </div>
+      <div class="pc-add au d4" onclick="go('newproject')">
+        <div class="pc-add-ic">+</div><span style="font-size:.875rem;font-weight:500;color:var(--g500)">Nouveau projet</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Activité récente</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="ni unread">
+          <div class="ndot"></div><div class="av av-sm c-green" style="flex-shrink:0">CÉ</div>
+          <div><div class="nt"><strong>Cédric</strong> a terminé <strong>«&nbsp;Intégrer l'endpoint auth&nbsp;»</strong> sur App Mobile RS</div><div class="ns">Il y a 12 min</div></div>
+        </div>
+        <div class="ni unread">
+          <div class="ndot"></div><div class="av av-sm c-blue" style="flex-shrink:0">DA</div>
+          <div style="flex:1"><div class="nt"><strong>Darel</strong> vous propose un <strong>troc de compétences</strong> : React contre PHP</div><div class="ns">Il y a 1 h</div></div>
+          <button class="btn btn-s btn-sm" onclick="go('matching')">Voir</button>
+        </div>
+        <div class="ni">
+          <div style="width:8px;flex-shrink:0"></div><div class="av av-sm c-amber" style="flex-shrink:0">FR</div>
+          <div><div class="nt"><strong>Franck</strong> a ajouté la tâche <strong>«&nbsp;Créer le composant Navbar&nbsp;»</strong></div><div class="ns">Hier à 15h42</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P5 — NOUVEAU PROJET
+========================================================= -->
+<div class="page with-nav" id="page-newproject">
+  <div style="max-width:760px;margin:0 auto;padding:2rem 1.5rem">
+    <div class="au" style="margin-bottom:2rem">
+      <button class="btn btn-g btn-sm" style="padding:0;color:var(--g500);margin-bottom:1rem" onclick="go('dashboard')">← Dashboard</button>
+      <h1 style="font-family:var(--ff-d);font-size:1.75rem;font-weight:800;color:var(--g900);letter-spacing:-.02em">Nouveau projet</h1>
+      <p style="color:var(--g500);margin-top:.3rem">Décrivez votre projet pour que Stratis optimise le matching de collaborateurs.</p>
+    </div>
+    <div class="fxc g20">
+      <div class="card au d1">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Informations générales</div>
+        <div class="fxc g16">
+          <div class="fg"><label class="fl">Titre du projet <span style="color:var(--err)">*</span></label><input class="inp" type="text" placeholder="Ex : Application e-commerce mobile"></div>
+          <div class="fg"><label class="fl">Description</label><textarea class="inp" rows="4" placeholder="Objectifs, technologies, contexte du projet..."></textarea></div>
+          <div class="fr2">
+            <div class="fg"><label class="fl">Statut</label><select class="inp"><option>En cours</option><option>En pause</option></select></div>
+            <div class="fg"><label class="fl">Date d'échéance</label><input class="inp" type="date"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card au d2">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.5rem">Compétences recherchées</div>
+        <p style="font-size:.8rem;color:var(--g400);margin-bottom:1rem">Sélectionnez les compétences nécessaires pour activer le matching automatique.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+          <button class="ct on" onclick="this.classList.toggle('on')">React</button>
+          <button class="ct" onclick="this.classList.toggle('on')">PHP</button>
+          <button class="ct" onclick="this.classList.toggle('on')">Python</button>
+          <button class="ct on" onclick="this.classList.toggle('on')">Design UI</button>
+          <button class="ct" onclick="this.classList.toggle('on')">Base de données</button>
+          <button class="ct" onclick="this.classList.toggle('on')">DevOps</button>
+          <button class="ct" onclick="this.classList.toggle('on')">Node.js</button>
+          <button class="ct" onclick="this.classList.toggle('on')">Gestion de projet</button>
+          <button class="ct" onclick="this.classList.toggle('on')">Vue.js</button>
+          <button class="ct" onclick="this.classList.toggle('on')">Machine Learning</button>
+        </div>
+      </div>
+      <div class="card au d3">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Membres initiaux (optionnel)</div>
+        <div class="fg">
+          <label class="fl">Inviter par email ou nom d'utilisateur</label>
+          <div class="fx g8"><input class="inp" type="text" placeholder="@alice ou alice@email.com" style="flex:1"><button class="btn btn-s">Inviter</button></div>
+          <span class="fh">Ils recevront une notification pour rejoindre le projet.</span>
+        </div>
+        <div class="fxc g8" style="margin-top:.75rem">
+          <div class="ur" style="border:1px solid var(--g200);border-radius:var(--r-md)">
+            <div class="av av-sm c-amber">FR</div>
+            <div><div class="ur-name">Franck Dubois</div><div class="ur-sk">@franck_dev · React, Node.js</div></div>
+            <button class="btn btn-d btn-sm" style="margin-left:auto">Retirer</button>
+          </div>
+        </div>
+      </div>
+      <div class="fx jb" style="padding-bottom:5rem">
+        <button class="btn btn-s" onclick="go('dashboard')">Annuler</button>
+        <button class="btn btn-p" onclick="go('detail')">Créer le projet →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P6 — DÉTAIL PROJET
+========================================================= -->
+<div class="page with-nav" id="page-detail">
+  <div class="ph">
+    <div class="ph-in">
+      <div class="au">
+        <div class="bc"><a onclick="go('dashboard')">Dashboard</a> › <span>App Mobile RS</span></div>
+        <div class="ph-name">Application Mobile RS</div>
+        <div class="ph-meta">
+          <span class="badge b-blue">En cours</span>
+          <span>📅 Échéance : 15 mars 2026</span>
+          <span>👤 3 membres</span>
+          <span>✅ 8/14 tâches</span>
+        </div>
+      </div>
+      <div class="fxc aic" style="align-items:flex-end;gap:.5rem;min-width:200px" class="au d1">
+        <div class="fx jb w100"><span style="font-size:.8rem;color:var(--g500)">Avancement global</span><span class="ph-pct">65%</span></div>
+        <div class="pw pw-lg w100"><div class="pf" style="width:65%"></div></div>
+        <div class="fx g8" style="margin-top:.25rem">
+          <button class="btn btn-s btn-sm" onclick="go('members')">👥 Membres</button>
+          <button class="btn btn-p btn-sm" onclick="go('newtask')">+ Tâche</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctr">
+    <div class="p3" style="padding-bottom:5rem">
+      <!-- ÉQUIPE -->
+      <div class="fxc g16 au">
+        <div class="card card-sm">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.75rem">Équipe</div>
+          <div class="fxc g8">
+            <div class="fx aic g8" style="padding:.5rem 0;border-bottom:1px solid var(--g100)">
+              <div class="av av-sm c-grad">AL</div><div style="flex:1"><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Alice Martin</div><div style="font-size:.72rem;color:var(--g400)">Propriétaire</div></div><div style="width:10px;height:10px;border-radius:50%;background:#3B82F6"></div>
+            </div>
+            <div class="fx aic g8" style="padding:.5rem 0;border-bottom:1px solid var(--g100)">
+              <div class="av av-sm c-amber">FR</div><div style="flex:1"><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Franck Dubois</div><div style="font-size:.72rem;color:var(--g400)">Frontend</div></div><div style="width:10px;height:10px;border-radius:50%;background:#F59E0B"></div>
+            </div>
+            <div class="fx aic g8" style="padding:.5rem 0">
+              <div class="av av-sm c-green">CÉ</div><div style="flex:1"><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Cédric Nguyen</div><div style="font-size:.72rem;color:var(--g400)">Backend</div></div><div style="width:10px;height:10px;border-radius:50%;background:#10B981"></div>
+            </div>
+          </div>
+          <button class="btn btn-s btn-sm btn-full" style="margin-top:.75rem" onclick="go('members')">Gérer l'équipe</button>
+        </div>
+        <div class="card card-sm">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.75rem">Compétences requises</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem"><span class="chip">React</span><span class="chip">PHP</span><span class="chip">Design UI</span></div>
+        </div>
+        <div class="card card-sm">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.75rem">Statistiques</div>
+          <div class="sp"><span style="color:var(--g500);font-size:.83rem">Total tâches</span><span style="font-weight:600">14</span></div>
+          <div class="sp"><span style="color:var(--g500);font-size:.83rem">Terminées</span><span style="font-weight:600;color:var(--ok)">8</span></div>
+          <div class="sp"><span style="color:var(--g500);font-size:.83rem">En cours</span><span style="font-weight:600;color:var(--warn)">3</span></div>
+          <div class="sp"><span style="color:var(--g500);font-size:.83rem">À faire</span><span style="font-weight:600">3</span></div>
+        </div>
+      </div>
+
+      <!-- TÂCHES -->
+      <div class="au d2">
+        <div class="tabs">
+          <button class="tab on">Toutes</button>
+          <button class="tab">À faire</button>
+          <button class="tab">En cours</button>
+          <button class="tab">Terminées</button>
+        </div>
+        <button class="btn btn-s btn-sm btn-full" style="border-style:dashed;margin-bottom:1rem" onclick="go('newtask')">+ Ajouter une tâche</button>
+        <div class="fxc g12">
+          <div class="ti"><div class="tck done"></div><div class="tb"><div class="tt done">Maquetter la page d'accueil</div><div class="tm"><span class="td">📅 14 janv.</span><span class="badge b-green" style="font-size:.68rem;padding:.1rem .5rem">Terminé</span></div></div><div class="av av-xs c-green">CÉ</div></div>
+          <div>
+            <div class="ti"><div class="tck wip"></div><div class="tb"><div class="tt">Intégrer le composant de connexion</div><div class="tm"><span class="td">📅 20 janv.</span><span class="badge b-amber" style="font-size:.68rem;padding:.1rem .5rem">En cours</span><span style="font-size:.72rem;color:var(--g400)">2/3 sous-tâches</span></div></div><div class="av av-xs c-amber">FR</div></div>
+            <div class="tch">
+              <div class="tci"><div class="tcc done"></div><span class="tcl done">Formulaire de login</span></div>
+              <div class="tci"><div class="tcc done"></div><span class="tcl done">Gestion des erreurs</span></div>
+              <div class="tci"><div class="tcc"></div><span class="tcl">Validation des champs</span></div>
+            </div>
+          </div>
+          <div class="ti"><div class="tck wip"></div><div class="tb"><div class="tt">Concevoir le dashboard admin</div><div class="tm"><span class="td">📅 22 janv.</span><span class="badge b-amber" style="font-size:.68rem;padding:.1rem .5rem">En cours</span></div></div><div class="av av-xs c-blue">AL</div></div>
+          <div class="ti"><div class="tck"></div><div class="tb"><div class="tt">Créer le dashboard principal</div><div class="tm"><span class="td">📅 25 janv.</span><span class="badge b-gray" style="font-size:.68rem;padding:.1rem .5rem">À faire</span></div></div><div class="av av-xs c-blue">AL</div></div>
+          <div class="ti"><div class="tck"></div><div class="tb"><div class="tt">API endpoint matching</div><div class="tm"><span class="td">📅 1 fév.</span><span class="badge b-gray" style="font-size:.68rem;padding:.1rem .5rem">À faire</span></div></div><div class="av av-xs c-green">CÉ</div></div>
+          <div class="ti"><div class="tck"></div><div class="tb"><div class="tt">Tests d'intégration frontend/backend</div><div class="tm"><span class="td">📅 10 fév.</span><span class="badge b-gray" style="font-size:.68rem;padding:.1rem .5rem">À faire</span></div></div></div>
+        </div>
+      </div>
+
+      <!-- MATCHING -->
+      <div class="fxc g12 au d3">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400)">Matching intelligent</div>
+        <button class="btn btn-s btn-full" onclick="go('matching')">🔍 Lancer le matching</button>
+        <div class="mc">
+          <div class="fx aic g8" style="margin-bottom:.75rem"><div class="av av-sm c-blue">DA</div><div style="flex:1"><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Darel Kouassi</div><div style="font-size:.72rem;color:var(--g500)">85% compatible</div></div><span class="badge b-blue" style="font-size:.65rem">TOP</span></div>
+          <div class="pw" style="margin-bottom:.6rem"><div class="pf" style="width:85%"></div></div>
+          <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.75rem"><span class="chip chip-sm">React</span><span class="chip chip-sm">Node.js</span><span class="chip chip-sm">UI/UX</span></div>
+          <button class="btn btn-p btn-sm btn-full" onclick="go('members')">Inviter</button>
+        </div>
+        <div class="mc">
+          <div class="fx aic g8" style="margin-bottom:.75rem"><div class="av av-sm c-green">MA</div><div style="flex:1"><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Marie Abo</div><div style="font-size:.72rem;color:var(--g500)">72% compatible</div></div></div>
+          <div class="pw" style="margin-bottom:.6rem"><div class="pf" style="width:72%"></div></div>
+          <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.75rem"><span class="chip chip-sm">PHP</span><span class="chip chip-sm">Design UI</span></div>
+          <button class="btn btn-s btn-sm btn-full">Inviter</button>
+        </div>
+        <div class="troc">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--b600);margin-bottom:.5rem">🤝 Suggestion Troc</div>
+          <div style="font-size:.83rem;color:var(--g700);line-height:1.6"><strong>Darel</strong> vous aide en <em>React</em>, vous l'aidez en <em>PHP</em> sur <strong>App Finance</strong>.</div>
+          <button class="btn btn-g btn-sm" style="padding:.35rem 0;color:var(--b500);margin-top:.5rem" onclick="go('matching')">Voir la mise en relation →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P7 — NOUVELLE TÂCHE
+========================================================= -->
+<div class="page with-nav" id="page-newtask">
+  <div style="max-width:620px;margin:0 auto;padding:2rem 1.5rem">
+    <div class="au" style="margin-bottom:2rem">
+      <button class="btn btn-g btn-sm" style="padding:0;color:var(--g500);margin-bottom:1rem" onclick="go('detail')">← Retour au projet</button>
+      <h1 style="font-family:var(--ff-d);font-size:1.75rem;font-weight:800;color:var(--g900);letter-spacing:-.02em">Nouvelle tâche</h1>
+      <p style="color:var(--g500);margin-top:.3rem">Projet : <strong style="color:var(--g700)">Application Mobile RS</strong></p>
+    </div>
+    <div class="fxc g20">
+      <div class="card au d1">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Détails de la tâche</div>
+        <div class="fxc g16">
+          <div class="fg"><label class="fl">Titre <span style="color:var(--err)">*</span></label><input class="inp" type="text" placeholder="Ex : Créer le composant Header"></div>
+          <div class="fg"><label class="fl">Description (optionnelle)</label><textarea class="inp" rows="3" placeholder="Décrivez ce qui doit être fait, les critères d'acceptation..."></textarea></div>
+          <div class="fr2">
+            <div class="fg"><label class="fl">Statut initial</label><select class="inp"><option>À faire</option><option>En cours</option></select></div>
+            <div class="fg"><label class="fl">Date d'échéance</label><input class="inp" type="date"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card au d2">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Assignation & hiérarchie</div>
+        <div class="fxc g16">
+          <div class="fg">
+            <label class="fl">Assigner à</label>
+            <select class="inp"><option value="">Non assigné</option><option>Alice Martin (vous)</option><option>Franck Dubois</option><option>Cédric Nguyen</option></select>
+            <span class="fh">Seuls les membres du projet peuvent être assignés.</span>
+          </div>
+          <div class="fg">
+            <label class="fl">Tâche parente (optionnelle)</label>
+            <select class="inp"><option value="">Aucune — tâche principale</option><option>Intégrer le composant de connexion</option><option>Créer le dashboard principal</option><option>API endpoint matching</option></select>
+            <span class="fh">Si cette tâche est une sous-tâche, sélectionnez la parente.</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-box info-blue au d3">
+        <strong>💡 Règle métier :</strong> Une tâche passe en «&nbsp;En cours&nbsp;» uniquement si sa tâche parente est «&nbsp;Terminée&nbsp;». Vérifié côté backend automatiquement.
+      </div>
+      <div class="fx jb" style="padding-bottom:5rem">
+        <button class="btn btn-s" onclick="go('detail')">Annuler</button>
+        <div class="fx g8">
+          <button class="btn btn-s btn-sm">Sauvegarder & créer une autre</button>
+          <button class="btn btn-p" onclick="go('detail')">Créer la tâche →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P8 — GESTION MEMBRES
+========================================================= -->
+<div class="page with-nav" id="page-members">
+  <div class="ctr">
+    <div class="au" style="margin-bottom:2rem">
+      <button class="btn btn-g btn-sm" style="padding:0;color:var(--g500);margin-bottom:1rem" onclick="go('detail')">← Retour au projet</button>
+      <h1 style="font-family:var(--ff-d);font-size:1.75rem;font-weight:800;color:var(--g900);letter-spacing:-.02em">Gestion des membres</h1>
+      <p style="color:var(--g500);margin-top:.3rem">Application Mobile RS · 3 membres</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+      <div class="au d1">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--g100)"><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400)">Membres actuels</div></div>
+          <div class="mt-hd"><span>Membre</span><span>Couleur</span><span>Rôle</span><span>Tâches</span><span></span></div>
+          <div class="mt-row">
+            <div class="fx aic g8"><div class="av av-sm c-grad">AL</div><div><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Alice Martin</div><div style="font-size:.72rem;color:var(--g400)">alice@email.com</div></div></div>
+            <div><div style="width:18px;height:18px;border-radius:50%;background:#3B82F6;border:2px solid #fff;box-shadow:0 0 0 1px var(--g300)"></div></div>
+            <div><span class="badge b-blue" style="font-size:.68rem">Propriétaire</span></div>
+            <div style="color:var(--g600)">5</div>
+            <div>—</div>
+          </div>
+          <div class="mt-row">
+            <div class="fx aic g8"><div class="av av-sm c-amber">FR</div><div><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Franck Dubois</div><div style="font-size:.72rem;color:var(--g400)">franck@email.com</div></div></div>
+            <div><div style="width:18px;height:18px;border-radius:50%;background:#F59E0B;border:2px solid #fff;box-shadow:0 0 0 1px var(--g300)"></div></div>
+            <div><span class="badge b-gray" style="font-size:.68rem">Membre</span></div>
+            <div style="color:var(--g600)">4</div>
+            <div><button class="btn btn-d btn-sm" style="padding:.2rem .6rem;font-size:.75rem">Retirer</button></div>
+          </div>
+          <div class="mt-row">
+            <div class="fx aic g8"><div class="av av-sm c-green">CÉ</div><div><div style="font-weight:600;font-size:.875rem;color:var(--g800)">Cédric Nguyen</div><div style="font-size:.72rem;color:var(--g400)">cedric@email.com</div></div></div>
+            <div><div style="width:18px;height:18px;border-radius:50%;background:#10B981;border:2px solid #fff;box-shadow:0 0 0 1px var(--g300)"></div></div>
+            <div><span class="badge b-gray" style="font-size:.68rem">Membre</span></div>
+            <div style="color:var(--g600)">3</div>
+            <div><button class="btn btn-d btn-sm" style="padding:.2rem .6rem;font-size:.75rem">Retirer</button></div>
+          </div>
+        </div>
+        <div class="info-box info-amber" style="margin-top:1rem"><strong>⚠ Retirer un membre</strong> désassigne automatiquement toutes ses tâches dans ce projet. Cette action est irréversible.</div>
+      </div>
+      <div class="au d2">
+        <div class="card">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Inviter un nouveau membre</div>
+          <div class="fxc g16">
+            <div class="fg"><label class="fl">Rechercher</label><div class="fx g8"><input class="inp" type="text" placeholder="@username ou email@example.com" style="flex:1"><button class="btn btn-s">Rechercher</button></div></div>
+            <div class="fxc g8">
+              <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.25rem">Suggestions matching</div>
+              <div class="ur"><div class="av av-sm c-blue">DA</div><div><div class="ur-name">Darel Kouassi</div><div class="ur-sk">@darel · React, Node.js · 85% compatible</div></div><button class="btn btn-p btn-sm" style="margin-left:auto">Inviter</button></div>
+              <div class="ur"><div class="av av-sm c-purple">MA</div><div><div class="ur-name">Marie Abo</div><div class="ur-sk">@marie · PHP, Design · 72% compatible</div></div><button class="btn btn-s btn-sm" style="margin-left:auto">Inviter</button></div>
+              <div class="ur"><div class="av av-sm c-red">KO</div><div><div class="ur-name">Kofi Mensah</div><div class="ur-sk">@kofi · Python, ML · 55% compatible</div></div><button class="btn btn-s btn-sm" style="margin-left:auto">Inviter</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P9 — MATCHING
+========================================================= -->
+<div class="page with-nav" id="page-matching">
+  <div class="ctr">
+    <div class="fx jb aic" style="flex-wrap:wrap;gap:1rem;margin-bottom:2rem" class="au">
+      <div><h1 style="font-family:var(--ff-d);font-size:1.85rem;font-weight:800;color:var(--g900);letter-spacing:-.02em">Matching intelligent 🤝</h1><p style="color:var(--g500);margin-top:.25rem">Trouvez les bons collaborateurs par compétences et proposez des trocs équilibrés.</p></div>
+      <button class="btn btn-p">🔍 Relancer l'analyse</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+      <div class="fxc g12 au d1">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400)">Collaborateurs suggérés — App Mobile RS</div>
+        <div class="card" style="border-left:4px solid var(--b400)">
+          <div class="fx aic g12" style="margin-bottom:.75rem"><div class="av av-md c-blue">DA</div><div style="flex:1"><div style="font-weight:700;font-size:.95rem;color:var(--g900)">Darel Kouassi</div><div style="font-size:.78rem;color:var(--g500)">@darel_dev</div></div><div style="text-align:right"><div style="font-family:var(--ff-d);font-size:1.25rem;font-weight:700;color:var(--b500)">85%</div><div style="font-size:.7rem;color:var(--g400)">affinité</div></div></div>
+          <div class="pw" style="margin-bottom:.75rem"><div class="pf" style="width:85%"></div></div>
+          <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.75rem"><span class="chip chip-sm chip-on">React</span><span class="chip chip-sm chip-on">Node.js</span><span class="chip chip-sm">PHP</span><span class="chip chip-sm">UI/UX</span></div>
+          <div class="fx g8"><button class="btn btn-p btn-sm" style="flex:1;justify-content:center">Inviter sur le projet</button><button class="btn btn-s btn-sm">Profil</button></div>
+        </div>
+        <div class="card">
+          <div class="fx aic g12" style="margin-bottom:.75rem"><div class="av av-md c-green">MA</div><div style="flex:1"><div style="font-weight:700;font-size:.95rem;color:var(--g900)">Marie Abo</div><div style="font-size:.78rem;color:var(--g500)">@marie_design</div></div><div style="text-align:right"><div style="font-family:var(--ff-d);font-size:1.25rem;font-weight:700;color:var(--b500)">72%</div><div style="font-size:.7rem;color:var(--g400)">affinité</div></div></div>
+          <div class="pw" style="margin-bottom:.75rem"><div class="pf" style="width:72%"></div></div>
+          <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.75rem"><span class="chip chip-sm chip-on">Design UI</span><span class="chip chip-sm">PHP</span></div>
+          <div class="fx g8"><button class="btn btn-s btn-sm" style="flex:1;justify-content:center">Inviter sur le projet</button><button class="btn btn-s btn-sm">Profil</button></div>
+        </div>
+        <div class="card">
+          <div class="fx aic g12" style="margin-bottom:.75rem"><div class="av av-md c-red">KO</div><div style="flex:1"><div style="font-weight:700;font-size:.95rem;color:var(--g900)">Kofi Mensah</div><div style="font-size:.78rem;color:var(--g500)">@kofi_ml</div></div><div style="text-align:right"><div style="font-family:var(--ff-d);font-size:1.25rem;font-weight:700;color:var(--g500)">55%</div><div style="font-size:.7rem;color:var(--g400)">affinité</div></div></div>
+          <div class="pw" style="margin-bottom:.75rem"><div class="pf" style="width:55%;background:var(--g300)"></div></div>
+          <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.75rem"><span class="chip chip-sm">Python</span><span class="chip chip-sm">ML</span></div>
+          <div class="fx g8"><button class="btn btn-s btn-sm" style="flex:1;justify-content:center">Inviter sur le projet</button><button class="btn btn-s btn-sm">Profil</button></div>
+        </div>
+      </div>
+      <div class="fxc g12 au d2">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400)">Propositions de troc 🔄</div>
+        <div class="card" style="border-top:3px solid var(--b400)">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--b500);margin-bottom:1rem">TROC WIN-WIN #1</div>
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.75rem;margin-bottom:1rem">
+            <div style="text-align:center;padding:.75rem;background:var(--g50);border-radius:var(--r-md)"><div class="av av-sm c-grad" style="margin:0 auto .4rem">AL</div><div style="font-size:.8rem;font-weight:600;color:var(--g800)">Vous</div><div style="font-size:.72rem;color:var(--g500)">apportez PHP</div><span class="chip chip-sm" style="margin-top:.3rem">PHP</span></div>
+            <div style="font-size:1.25rem;color:var(--b400)">⇄</div>
+            <div style="text-align:center;padding:.75rem;background:var(--g50);border-radius:var(--r-md)"><div class="av av-sm c-blue" style="margin:0 auto .4rem">DA</div><div style="font-size:.8rem;font-weight:600;color:var(--g800)">Darel</div><div style="font-size:.72rem;color:var(--g500)">apporte React</div><span class="chip chip-sm" style="margin-top:.3rem">React</span></div>
+          </div>
+          <div style="font-size:.82rem;color:var(--g600);background:var(--g50);padding:.75rem;border-radius:var(--r-sm);margin-bottom:.75rem">Darel a besoin de PHP pour son projet <strong>App Finance</strong>. Vous avez besoin de React pour <strong>App Mobile RS</strong>.</div>
+          <button class="btn btn-p btn-sm btn-full">Accepter le troc</button>
+        </div>
+        <div class="card" style="border-top:3px solid var(--pur)">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--pur);margin-bottom:1rem">TROC WIN-WIN #2</div>
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.75rem;margin-bottom:1rem">
+            <div style="text-align:center;padding:.75rem;background:var(--g50);border-radius:var(--r-md)"><div class="av av-sm c-grad" style="margin:0 auto .4rem">AL</div><div style="font-size:.8rem;font-weight:600;color:var(--g800)">Vous</div><div style="font-size:.72rem;color:var(--g500)">apportez Gestion</div><span class="chip chip-sm" style="margin-top:.3rem;font-size:.65rem">Gestion projet</span></div>
+            <div style="font-size:1.25rem;color:var(--pur)">⇄</div>
+            <div style="text-align:center;padding:.75rem;background:var(--g50);border-radius:var(--r-md)"><div class="av av-sm c-purple" style="margin:0 auto .4rem">MA</div><div style="font-size:.8rem;font-weight:600;color:var(--g800)">Marie</div><div style="font-size:.72rem;color:var(--g500)">apporte Design UI</div><span class="chip chip-sm" style="margin-top:.3rem;font-size:.65rem">Design UI</span></div>
+          </div>
+          <button class="btn btn-s btn-sm btn-full">Accepter le troc</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P10 — PROFIL
+========================================================= -->
+<div class="page with-nav" id="page-profile">
+  <div class="prof-lay">
+    <div class="fxc g16 au">
+      <div class="card" style="text-align:center">
+        <div class="prof-av-big">AL</div>
+        <div style="font-family:var(--ff-d);font-size:1.15rem;font-weight:700;color:var(--g900)">Alice Martin</div>
+        <div style="font-size:.83rem;color:var(--g500);margin-top:.2rem">alice.martin@email.com</div>
+        <div style="font-size:.85rem;color:var(--g600);line-height:1.6;margin-top:.75rem">Développeuse passionnée, spécialisée en React et gestion de projet.</div>
+        <button class="btn btn-s btn-sm btn-full" style="margin-top:1rem">Modifier la photo</button>
+      </div>
+      <div class="card">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.75rem">Statistiques</div>
+        <div class="sp"><span style="color:var(--g500)">Projets actifs</span><span style="font-weight:600">4</span></div>
+        <div class="sp"><span style="color:var(--g500)">Tâches terminées</span><span style="font-weight:600">34</span></div>
+        <div class="sp"><span style="color:var(--g500)">Collaborateurs</span><span style="font-weight:600">8</span></div>
+        <div class="sp"><span style="color:var(--g500)">Matchings reçus</span><span style="font-weight:600">12</span></div>
+        <div class="sp"><span style="color:var(--g500)">Trocs effectués</span><span style="font-weight:600">2</span></div>
+      </div>
+    </div>
+    <div class="fxc g20 au d1">
+      <div class="tabs" style="margin-bottom:0"><button class="tab on">Informations</button><button class="tab">Compétences</button><button class="tab">Sécurité</button><button class="tab">Notifications</button></div>
+      <div class="card">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Informations personnelles</div>
+        <div class="fxc g16">
+          <div class="fr2"><div class="fg"><label class="fl">Nom d'utilisateur</label><input class="inp" type="text" value="Alice Martin"></div><div class="fg"><label class="fl">Email</label><input class="inp" type="email" value="alice.martin@email.com"></div></div>
+          <div class="fg"><label class="fl">Bio</label><textarea class="inp" rows="2">Développeuse passionnée, spécialisée en React et gestion de projet.</textarea></div>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-p btn-sm">Enregistrer les modifications</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Mes compétences</div>
+        <div class="cr"><div class="fxc g4"><div style="font-weight:500;font-size:.9rem;color:var(--g800)">React</div><div style="font-size:.78rem;color:var(--g500)">Expert</div></div><div class="fx aic g12"><div class="sd"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div><button class="btn btn-d btn-sm" style="padding:.2rem .6rem">✕</button></div></div>
+        <div class="cr"><div class="fxc g4"><div style="font-weight:500;font-size:.9rem;color:var(--g800)">PHP</div><div style="font-size:.78rem;color:var(--g500)">Intermédiaire</div></div><div class="fx aic g12"><div class="sd"><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div><button class="btn btn-d btn-sm" style="padding:.2rem .6rem">✕</button></div></div>
+        <div class="cr"><div class="fxc g4"><div style="font-weight:500;font-size:.9rem;color:var(--g800)">Gestion de projet</div><div style="font-size:.78rem;color:var(--g500)">Expert</div></div><div class="fx aic g12"><div class="sd"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div><button class="btn btn-d btn-sm" style="padding:.2rem .6rem">✕</button></div></div>
+        <div class="cr"><div class="fxc g4"><div style="font-weight:500;font-size:.9rem;color:var(--g800)">Design UI</div><div style="font-size:.78rem;color:var(--g500)">Débutant</div></div><div class="fx aic g12"><div class="sd"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div><button class="btn btn-d btn-sm" style="padding:.2rem .6rem">✕</button></div></div>
+        <div class="div"></div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:.75rem">Ajouter une compétence</div>
+        <div class="fx g12" style="flex-wrap:wrap;align-items:flex-end">
+          <div class="fg" style="flex:1;min-width:120px"><label class="fl">Compétence</label><select class="inp"><option>Choisir...</option><option>Python</option><option>DevOps</option><option>Node.js</option><option>Base de données</option></select></div>
+          <div class="fg" style="flex:1;min-width:100px"><label class="fl">Niveau</label><select class="inp"><option>Débutant</option><option>Intermédiaire</option><option>Expert</option></select></div>
+          <button class="btn btn-p btn-sm" style="align-self:flex-end">Ajouter</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:1rem">Sécurité du compte</div>
+        <div class="fxc g16">
+          <div class="fg"><label class="fl">Mot de passe actuel</label><input class="inp" type="password" placeholder="••••••••"></div>
+          <div class="fr2"><div class="fg"><label class="fl">Nouveau mot de passe</label><input class="inp" type="password" placeholder="8 caractères minimum"></div><div class="fg"><label class="fl">Confirmer</label><input class="inp" type="password" placeholder="••••••••"></div></div>
+          <div class="fx jb aic" style="flex-wrap:wrap;gap:.75rem">
+            <button class="btn btn-p btn-sm">Changer le mot de passe</button>
+            <button class="btn btn-d btn-sm">🗑 Supprimer mon compte</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P11 — NOTIFICATIONS
+========================================================= -->
+<div class="page with-nav" id="page-notifications">
+  <div class="ctr" style="max-width:760px">
+    <div class="fx jb aic" style="flex-wrap:wrap;gap:1rem;margin-bottom:2rem" class="au">
+      <div><h1 style="font-family:var(--ff-d);font-size:1.85rem;font-weight:800;color:var(--g900);letter-spacing:-.02em">Notifications 🔔</h1><p style="color:var(--g500);margin-top:.25rem">3 non lues</p></div>
+      <button class="btn btn-g btn-sm">Tout marquer comme lu</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="ni unread"><div class="ndot"></div><div class="av av-sm c-green" style="flex-shrink:0">CÉ</div><div style="flex:1"><div class="nt"><strong>Cédric</strong> a terminé <strong>«&nbsp;Intégrer l'endpoint auth&nbsp;»</strong> sur <strong>App Mobile RS</strong></div><div class="ns">Il y a 12 min</div></div><span class="badge b-green" style="flex-shrink:0;align-self:flex-start">Tâche</span></div>
+      <div class="ni unread"><div class="ndot"></div><div class="av av-sm c-blue" style="flex-shrink:0">DA</div><div style="flex:1"><div class="nt"><strong>Darel Kouassi</strong> vous propose un <strong>troc de compétences</strong> : React contre PHP</div><div class="ns">Il y a 1 h</div></div><button class="btn btn-p btn-sm" onclick="go('matching')">Voir</button></div>
+      <div class="ni unread"><div class="ndot"></div><div class="av av-sm c-grad" style="flex-shrink:0">ST</div><div style="flex:1"><div class="nt"><strong>Stratis</strong> a trouvé <strong>3 nouveaux collaborateurs</strong> compatibles pour App Mobile RS</div><div class="ns">Il y a 2 h</div></div><span class="badge b-purple" style="flex-shrink:0;align-self:flex-start">Matching</span></div>
+      <div class="ni"><div style="width:8px;flex-shrink:0"></div><div class="av av-sm c-amber" style="flex-shrink:0">FR</div><div style="flex:1"><div class="nt"><strong>Franck</strong> a ajouté la tâche <strong>«&nbsp;Créer le composant Navbar&nbsp;»</strong></div><div class="ns">Hier à 15h42</div></div><span class="badge b-gray" style="flex-shrink:0;align-self:flex-start">Tâche</span></div>
+      <div class="ni"><div style="width:8px;flex-shrink:0"></div><div class="av av-sm c-blue" style="flex-shrink:0">DA</div><div style="flex:1"><div class="nt"><strong>Darel Kouassi</strong> a rejoint le projet <strong>Site Vitrine Startup</strong></div><div class="ns">Hier à 10h15</div></div><span class="badge b-blue" style="flex-shrink:0;align-self:flex-start">Projet</span></div>
+      <div class="ni"><div style="width:8px;flex-shrink:0"></div><div class="av av-sm c-green" style="flex-shrink:0">CÉ</div><div style="flex:1"><div class="nt"><strong>Cédric</strong> a modifié le statut de <strong>«&nbsp;Maquetter la page d'accueil&nbsp;»</strong> → <span style="color:var(--ok-d)">Terminé</span></div><div class="ns">14 janv. à 17h30</div></div><span class="badge b-green" style="flex-shrink:0;align-self:flex-start">Tâche</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  P12 — 404
+========================================================= -->
+<div class="page with-nav" id="page-e404">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:80vh">
+    <div class="es as">
+      <div style="font-family:var(--ff-d);font-size:6rem;font-weight:800;color:var(--g200);letter-spacing:-.05em;line-height:1">404</div>
+      <div class="es-t">Page introuvable</div>
+      <p class="es-p">Cette page n'existe pas ou vous n'avez pas les droits pour y accéder.</p>
+      <button class="btn btn-p" onclick="go('dashboard')">← Retour au dashboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const AUTH = ['login','register','forgot'];
+function go(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.dev-tab').forEach(t => t.classList.remove('active'));
+  const pg = document.getElementById('page-' + name);
+  pg.classList.add('active');
+  const map = {login:0,register:1,forgot:2,dashboard:3,newproject:4,detail:5,newtask:6,members:7,matching:8,profile:9,notifications:10,e404:11};
+  const tabs = document.querySelectorAll('.dev-tab');
+  if (tabs[map[name]]) tabs[map[name]].classList.add('active');
+  document.getElementById('nb').style.display = AUTH.includes(name) ? 'none' : '';
+  window.scrollTo({top:0,behavior:'smooth'});
+  // re-trigger animations
+  pg.querySelectorAll('.au,.as,.ai').forEach(el => { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
+}
+// Date
+const d = new Date();
+const el = document.getElementById('dt');
+if (el) el.textContent = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+// tab switching (detail page)
+document.querySelectorAll('.tabs').forEach(tabs => {
+  tabs.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => { tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('on')); tab.classList.add('on'); });
+  });
+});
+go('login');
+</script>
+</body>
+</html>
